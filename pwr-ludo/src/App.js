@@ -6,7 +6,8 @@ class App extends Component {
     super(props)
     this.state={
       code:['1','1','1','1'],
-      playerGuess: [],
+      playerGuess: ['','','',''],
+      winner: false,
 
 
     }
@@ -14,19 +15,39 @@ class App extends Component {
     codeMaker(){
         let newCode =[]
         this.state.code.map(()=> newCode.push(Math.floor(Math.random()*6)))
-          this.setState({
+        console.log(newCode)
+        this.setState({
           code: newCode,
+          playerGuess: ['','','',''],
+          winner: false,
         })
-        console.log(this.state.code)
+        //console.log(this.state.code)
       }
 
+
     getGuess(){
-      let guess = document.getElementsByClassName('playerGuess').innerHTML
+      let guess =[]
+      let inputs = document.getElementsByClassName( 'guessInput' )
+      let playerTry = this.state.playerGuess.map.call(inputs, function( input ) {
+         guess.push(parseInt(input.value));
+    });
       console.log(guess)
+      this.validateGuess(guess)
       }
+
+      validateGuess(guess){
+        this.setState({
+          playerGuess : guess,
+          winner : this.state.code.toString() === this.state.playerGuess.toString(),
+        })
+          this.checkForWinner()
+      }
+
     checkForWinner(){
-      if(this.state.code === this.state.playerGuess){
+      if(this.state.winner){
         alert('Winner winner chicken dinner')
+      }else{
+        console.log('try again')
       }
 
     }  
@@ -36,11 +57,11 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-header">
-          <h2>Power Ludo</h2>
+          <h2>Mastermind</h2>
           <button onClick={() => this.codeMaker()}> New Game</button>
           <div className="container">
-          {this.state.code.map((index) =>{ 
-            return <input type='text' className='playerGuess' className='guessInput'></input>
+          {this.state.playerGuess.map(() =>{ 
+            return <input type='text' className='guessInput'>{}</input>
           })}
           <button onClick={() => this.getGuess()} >Submit Guess </button>
 
