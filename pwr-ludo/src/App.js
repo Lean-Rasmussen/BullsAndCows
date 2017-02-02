@@ -7,9 +7,8 @@ class App extends Component {
     this.state={
       code:['1','1','1','1'],
       playerGuess: [],
-      guessesLeft : 10,
-
-
+      pastGuesses: ['','','','','','','','','',''],
+      guessesLeft : 9,
     }
   }
     codeMaker(){
@@ -18,11 +17,11 @@ class App extends Component {
         console.log(newCode)
         this.setState({
           code: newCode,
-          playerGuess: [],
-          guessesLeft : 10,
+          pastGuesses: ['','','','','','','','','',''],
+          guessesLeft : 9,
         })
+        
       }
-
 
     getGuess(){
       let guess =[]
@@ -33,27 +32,28 @@ class App extends Component {
       this.checkForWinner(guess)
       }
 
-  
-
-    checkForWinner(guess){
-      if(this.state.code.toString() === guess.toString()){
-        alert('Winner winner chicken dinner')
-      }else{
-      this.setState({
-        playerGuesses : guess,
-        guessesLeft : this.state.guessesLeft-1,
-      })
-      this.checkLose()
-      console.log(this.state.guessesLeft)
-    }
-
-    }  
     checkLose(){
       if(this.state.guessesLeft ===1){
         alert('You Lose the code was' + this.state.code + ' better luck next time')
         this.codeMaker()
       }
     }
+
+    checkForWinner(guess){
+      if(this.state.code.toString() === guess.toString()){
+        alert('Winner winner chicken dinner')
+      }else{     
+        let index = this.state.pastGuesses.length-this.state.guessesLeft
+        console.log(index)
+        this.state.pastGuesses[index] = guess.join(' ').toString(),   
+        this.setState({
+          guessesLeft : this.state.guessesLeft-1,
+        }) 
+        this.checkLose()
+        console.log(this.state.pastGuesses)
+     }
+    }  
+
 
   render() {
     return (
@@ -66,13 +66,15 @@ class App extends Component {
             return <input type='text' className='guessInput'>{}</input>
           })}
           <button onClick={() => this.getGuess()} >Submit Guess </button>
-           <button onClick={() => this.checker()} >checker </button>
            <p1>{this.state.guessesLeft}</p1>
 
-          </div>
-
+           </div>
         </div>
-
+        <div className='pastGuessContainer'>
+           {this.state.pastGuesses.map((pastGuess)=> {
+            return <div className='pastGuesses'>{pastGuess}</div>
+           })}
+        </div>
       </div>
     );
   }
