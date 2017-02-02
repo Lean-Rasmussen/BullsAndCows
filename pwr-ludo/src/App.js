@@ -6,8 +6,8 @@ class App extends Component {
     super(props)
     this.state={
       code:['1','1','1','1'],
-      playerGuess: ['','','',''],
-      winner: false,
+      playerGuess: [],
+      guessesLeft : 10,
 
 
     }
@@ -18,10 +18,9 @@ class App extends Component {
         console.log(newCode)
         this.setState({
           code: newCode,
-          playerGuess: ['','','',''],
-          winner: false,
+          playerGuess: [],
+          guessesLeft : 10,
         })
-        //console.log(this.state.code)
       }
 
 
@@ -31,27 +30,30 @@ class App extends Component {
       let playerTry = this.state.playerGuess.map.call(inputs, function( input ) {
          guess.push(parseInt(input.value));
     });
-      console.log(guess)
-      this.validateGuess(guess)
+      this.checkForWinner(guess)
       }
 
-      validateGuess(guess){
-        this.setState({
-          playerGuess : guess,
-          winner : this.state.code.toString() === this.state.playerGuess.toString(),
-        })
-          this.checkForWinner()
-      }
+  
 
-    checkForWinner(){
-      if(this.state.winner){
+    checkForWinner(guess){
+      if(this.state.code.toString() === guess.toString()){
         alert('Winner winner chicken dinner')
       }else{
-        console.log('try again')
-      }
+      this.setState({
+        playerGuesses : guess,
+        guessesLeft : this.state.guessesLeft-1,
+      })
+      this.checkLose()
+      console.log(this.state.guessesLeft)
+    }
 
     }  
-
+    checkLose(){
+      if(this.state.guessesLeft ===1){
+        alert('You Lose the code was' + this.state.code + ' better luck next time')
+        this.codeMaker()
+      }
+    }
 
   render() {
     return (
@@ -60,12 +62,15 @@ class App extends Component {
           <h2>Mastermind</h2>
           <button onClick={() => this.codeMaker()}> New Game</button>
           <div className="container">
-          {this.state.playerGuess.map(() =>{ 
+          {this.state.code.map(() =>{ 
             return <input type='text' className='guessInput'>{}</input>
           })}
           <button onClick={() => this.getGuess()} >Submit Guess </button>
+           <button onClick={() => this.checker()} >checker </button>
+           <p1>{this.state.guessesLeft}</p1>
 
           </div>
+
         </div>
 
       </div>
