@@ -1,5 +1,9 @@
- import React, { Component } from 'react';
+import React, { Component } from 'react';
 import './App.css';
+//import checkForWinnerLoser from './components/checkForWinnerLoser'
+//import codebreakerLogic from './components/codebreakerLogic'
+//import getInputAndValidation from './components/getInputAndValidation'
+
 
 class App extends Component {
   constructor(props){  
@@ -16,9 +20,10 @@ class App extends Component {
     }
   }
 
-    codeMaker(){
+    newGame(){
         let newCode =[]
         this.state.code.map(()=> newCode.push(Math.floor(Math.random()*6)))
+        this.clearGuess()
         this.setState({
           code: newCode,
           pastGuesses: ['1st try','2nd try',' 3rd try',' 4th try','5th try','6th try','7th try','8th try','9th try','Final try'],
@@ -28,20 +33,39 @@ class App extends Component {
           currentGuess: 0,
         })
       } 
-
+//Moving into compoent getImputAncValidation
     getGuess(){ 
       let guess =[]
       let inputs = document.getElementsByClassName( 'guessInput' )
       this.state.playerGuess.map.call(inputs, function( input ) {
          guess.push(parseInt(input.value));
     });
-      this.checkForWinner(guess)
+      this.validateGuess(guess)
+      this.clearGuess()
       }
+
+     validateGuess(guess){
+      if(guess.length === 3 && guess.join(' ').toString() ===3 ){
+        console.log('incorrect amount of inputs')
+      }else{
+        this.checkForWinner(guess)
+      }
+
+
+     }
+     clearGuess(){
+      let guessInputs = document.getElementsByClassName('guessInput')
+      for(let i=0; i<guessInputs.length; i++){
+        guessInputs[i].value=''
+      }
+      console.log(guessInputs)
+     }
+/////
 
     checkLose(){
       if(this.state.guessesLeft ===1){
-        alert('You Lose the code was' + this.state.code + ' better luck next time')
-        this.codeMaker()
+        alert('You Lose the code was ' + this.state.code + ' better luck next time')
+        this.newGame()
       }
     }
 
@@ -52,17 +76,27 @@ class App extends Component {
        currentGuess: this.state.currentGuess+1
        }) 
     }playerTry
+     checkForWinner(guess){
+      if(this.state.code.toString() === guess.toString()){
+        alert('Winner winner chicken dinner')
+      }else{     
+        this.wrongGuessToState(guess)
+        this.checkLose()
+        this.feedbackForlocation(guess)
+        this.feedbackForGuess(guess)
+     }
+    }
+ 
 
+// getting moved into component CodeBreakerLogic
     feedbackForGuess(guess){
-      let matching =0
+      let matching = guess
       this.state.code.map(function(num){
-         if(guess.includes(num)){
-            matching++
+         if(matching.includes(num)){
+          matching.splice(matching.indexOf(num), 1)
           }
       })
-      this.state.numberMatches[this.state.currentGuess] = matching
-      console.log('matches constained in both arrays' + matching)
-      console.log('the code to guess ' + this.state.code)
+      this.state.numberMatches[this.state.currentGuess] = 4-matching.length -this.state.excatMatchesOfPastGuesses[this.state.currentGuess]
     }
     feedbackForlocation(guess){
       let checker = 0
@@ -75,26 +109,16 @@ class App extends Component {
         checker++
         }})
         this.state.excatMatchesOfPastGuesses[this.state.currentGuess] = exactMatch
-      console.log('excatmatches ' + exactMatch )
     }
-      checkForWinner(guess){
-      if(this.state.code.toString() === guess.toString()){
-        alert('Winner winner chicken dinner')
-      }else{     
-        this.wrongGuessToState(guess)
-        this.checkLose()
-        this.feedbackForlocation(guess)
-        this.feedbackForGuess(guess)
-        console.log(this.state.pastGuesses)
-     }
-    }  
+/// 
+ 
   render() {
     return (
       <div className="App">
         <div className="App-header">
         <h2>Mastermind</h2> 
         <p> This is a number version of the classic game masterming, however instead of colours the numbers 0-5 are used </p> 
-          <button onClick={() => this.codeMaker()}> New Game</button>
+          <button onClick={() => this.newGame()}> New Game</button>
           <div className="container">
           {this.state.code.map(() =>{ 
             return <input type='text' className='guessInput'>{}</input>
